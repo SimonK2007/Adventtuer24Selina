@@ -76,3 +76,4 @@ Hier sind ein paar liebevolle Ideen, die du optional noch einbauen kannst:
 2. **Sprachnachricht / Audio-Note**: Eine kurze, persönliche Sprachnachricht von dir im Notfall-Bereich abspielbar machen.
 3. **Spotify-Song**: Einen direkten Spotify-Link zu „Eurem Song“ als kleinen Button im Liebesbrief einbetten.
 4. **Mitternachts-Countdown**: Wenn sie die Seite vor dem 24.12. öffnet, könnte ein kleiner Zähler anzeigen, wie viele Stunden noch bis zur Bescherung fehlen.
+test
