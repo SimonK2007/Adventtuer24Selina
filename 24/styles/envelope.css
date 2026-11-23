@@ -1,0 +1,368 @@
+/* ==========================================================================
+   envelope.css - Vintage-Umschlag, 3D Wachssiegel & Öffnungs-Animation
+   ========================================================================== */
+
+.envelope-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 1.5rem auto 2.5rem auto;
+  perspective: 1200px;
+  position: relative;
+}
+
+.envelope-hint {
+  font-family: var(--font-handwriting);
+  font-size: 1.35rem;
+  color: var(--color-burgundy);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: gentle-bounce 2.2s infinite ease-in-out;
+  text-align: center;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Umschlag-Hülle */
+.envelope-container {
+  width: 100%;
+  max-width: 680px;
+  min-height: 420px;
+  background: var(--bg-page);
+  border: 2px solid var(--color-kraft-dark);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-deep);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.6s ease, box-shadow 0.6s ease;
+  background-image: 
+    linear-gradient(135deg, rgba(216, 195, 165, 0.25) 25%, transparent 25%),
+    linear-gradient(225deg, rgba(216, 195, 165, 0.25) 25%, transparent 25%),
+    linear-gradient(315deg, rgba(216, 195, 165, 0.25) 25%, transparent 25%),
+    linear-gradient(45deg, rgba(216, 195, 165, 0.25) 25%, transparent 25%);
+  background-size: 40px 40px;
+  background-color: #f7eedf;
+}
+
+/* Retro Airmail Rand */
+.envelope-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  border: 12px solid transparent;
+  border-image: repeating-linear-gradient(
+    -45deg,
+    #a31d24 0,
+    #a31d24 15px,
+    transparent 15px,
+    transparent 25px,
+    #2b4c7e 25px,
+    #2b4c7e 40px,
+    transparent 40px,
+    transparent 50px
+  ) 12;
+  z-index: 4;
+}
+
+/* Umschlag-Inhalt (Adressen, Stempel) */
+.envelope-front-details {
+  padding: 2.5rem 2.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+
+.envelope-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+/* Absender-Adresse */
+.envelope-sender {
+  font-family: var(--font-handwriting);
+  font-size: 1.15rem;
+  line-height: 1.35;
+  color: var(--color-ink-faded);
+  background: rgba(255, 255, 255, 0.5);
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--color-kraft);
+  max-width: 240px;
+  white-space: pre-line;
+}
+
+/* Briefmarke & Poststempel */
+.postage-area {
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+
+.vintage-stamp-box {
+  width: 75px;
+  height: 90px;
+  background: #fff;
+  border: 2px dashed #999;
+  border-radius: 2px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.vintage-stamp-box:hover {
+  transform: rotate(2deg) scale(1.05);
+}
+
+.stamp-illustration {
+  font-size: 1.8rem;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stamp-caption {
+  font-family: var(--font-serif);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-burgundy);
+  letter-spacing: 0.5px;
+}
+
+.postmark-cancel {
+  position: absolute;
+  right: -25px;
+  top: 15px;
+  width: 95px;
+  height: 95px;
+  border: 2px solid var(--color-stamp-red);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-15deg);
+  opacity: 0.78;
+  color: var(--color-stamp-red);
+  pointer-events: none;
+  font-family: monospace;
+  font-size: 0.65rem;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.1;
+  padding: 4px;
+}
+
+.postmark-lines {
+  position: absolute;
+  left: -40px;
+  width: 40px;
+  height: 25px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--color-stamp-red),
+    var(--color-stamp-red) 1px,
+    transparent 1px,
+    transparent 5px
+  );
+  opacity: 0.6;
+}
+
+/* Empfänger-Adresse (Zentriert/Rechts unten) */
+.envelope-recipient-wrap {
+  margin: 3rem 0 2rem auto;
+  max-width: 380px;
+  width: 100%;
+}
+
+.envelope-recipient {
+  font-family: var(--font-handwriting);
+  font-size: 1.65rem;
+  line-height: 1.4;
+  color: var(--color-ink);
+  background: rgba(255, 255, 255, 0.7);
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-kraft);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  white-space: pre-line;
+  transform: rotate(-1deg);
+}
+
+/* ==========================================================================
+   Dreiecks-Klappe & Wachssiegel
+   ========================================================================== */
+.envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  background: #eedec8;
+  border-bottom: 2px solid var(--color-kraft-dark);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top center;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.12);
+}
+
+/* Das Wachssiegel */
+.wax-seal {
+  position: absolute;
+  top: 155px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 84px;
+  height: 84px;
+  background: radial-gradient(circle at 35% 35%, #b92b33, #83151c 65%, #4e0c10);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 8px 20px rgba(50, 5, 10, 0.45),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+  user-select: none;
+}
+
+/* Unregelmäßiger handgemachter Wachs-Tropfenrand */
+.wax-seal::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  border-radius: 46% 54% 50% 50% / 52% 48% 52% 48%;
+  background: inherit;
+  z-index: -1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.wax-seal:hover {
+  transform: translateX(-50%) scale(1.08);
+  box-shadow: 
+    0 12px 25px rgba(50, 5, 10, 0.55),
+    inset 0 2px 5px rgba(255, 255, 255, 0.5);
+}
+
+.wax-seal-inner {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 255, 255, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.seal-heart {
+  font-size: 0.9rem;
+  line-height: 1;
+  margin-bottom: -2px;
+}
+
+.seal-number {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* Siegel Knack- & Öffnungsanimation */
+.envelope-section.breaking-seal .wax-seal {
+  animation: seal-crack 0.5s forwards ease-in-out;
+}
+
+@keyframes seal-crack {
+  0% { transform: translateX(-50%) scale(1); filter: brightness(1); }
+  40% { transform: translateX(-50%) scale(1.15) rotate(4deg); filter: brightness(1.3); }
+  70% { transform: translateX(-50%) scale(1.05) rotate(-3deg); }
+  100% { transform: translateX(-50%) scale(0.9) translateY(20px); opacity: 0; }
+}
+
+.envelope-section.opened .envelope-flap {
+  transform: rotateX(180deg);
+  z-index: 1;
+}
+
+.envelope-section.opened .wax-seal {
+  display: none;
+}
+
+.envelope-section.opened .envelope-hint {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Responsive Envelope
+   ========================================================================== */
+@media (max-width: 600px) {
+  .envelope-container {
+    min-height: 380px;
+  }
+  .envelope-front-details {
+    padding: 1.5rem 1.25rem;
+  }
+  .envelope-sender {
+    font-size: 0.95rem;
+    max-width: 170px;
+  }
+  .vintage-stamp-box {
+    width: 65px;
+    height: 80px;
+  }
+  .postmark-cancel {
+    width: 75px;
+    height: 75px;
+    right: -15px;
+    font-size: 0.55rem;
+  }
+  .envelope-recipient {
+    font-size: 1.25rem;
+    padding: 0.75rem 1rem;
+  }
+  .wax-seal {
+    top: 140px;
+    width: 72px;
+    height: 72px;
+  }
+  .wax-seal-inner {
+    width: 48px;
+    height: 48px;
+  }
+  .seal-number {
+    font-size: 1.25rem;
+  }
+}
+

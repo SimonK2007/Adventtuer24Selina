@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Türchen 24 • Das große Finale</title>
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/book.css">
+  <link rel="stylesheet" href="styles/components.css">
+</head>
+<body>
+
+  <!-- Tisch-Atmosphäre: Lichterkette oben -->
+  <div class="table-lights-string"></div>
+
+  <!-- Partikel & Konfetti-Leinwand -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Kopfzeile (Smartphone-optimiert) -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-wrapper">
+        <div class="mini-seal" data-egg-trigger="egg-seal" title="❤️ 24">
+          <span>24</span>
+        </div>
+        <div class="brand-text">
+          <h1 id="header-door-title">Türchen 24</h1>
+          <p>Unser Erinnerungsbuch</p>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <button id="easter-egg-badge" class="header-btn easter-egg-badge" title="Versteckte Geheimnisse">
+          <span class="icon">🗝️</span>
+          <span class="badge-count">0/5</span>
+        </button>
+        <button id="audio-toggle-btn" class="header-btn" title="Ton umschalten">
+          <span class="icon">🔔</span>
+          <span class="label">Ton aus</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Haupt-Container: Das Buch auf dem Tisch -->
+  <main class="app-container">
+
+    <div id="book-wrapper" class="book-wrapper">
+
+      <!-- ===================================================================
+           1. Das geschlossene Buch (Leder-Einband mit Herz-Biometrie-Schloss)
+           =================================================================== -->
+      <section id="closed-book-cover" class="closed-book-cover">
+        <div class="book-spine-left"></div>
+        <div class="book-corner top-right"></div>
+        <div class="book-corner bottom-right"></div>
+
+        <!-- Ex-Libris Etikett (Easter Egg #1) -->
+        <div class="ex-libris-stamp" data-egg-trigger="egg-stamp" title="Ein altes goldenes Buchsiegel...">
+          <span>📖 EX LIBRIS • 24.12</span>
+        </div>
+
+        <div class="cover-header">
+          <span class="cover-badge">Adventskalender • Heiligabend</span>
+          <div id="cover-book-title" class="cover-number">24</div>
+          <h2 id="cover-book-sub" class="cover-title">Unser Erinnerungsbuch</h2>
+          <p id="cover-book-dedication" class="cover-dedication">Für das wundervollste Mädchen der Welt</p>
+        </div>
+
+        <!-- Herz-Fingerabdruck-Scanner / Schloss -->
+        <div class="book-lock-area">
+          <button id="heart-fingerprint-btn" class="heart-fingerprint-btn" aria-label="Buch mit Herz-Scan öffnen">
+            <span class="lock-heart-icon">❤️</span>
+            <span class="lock-label">Öffnen</span>
+            <span class="scan-laser-beam"></span>
+          </button>
+          
+          <div class="scan-progress-wrap">
+            <div id="scan-progress-bar" class="scan-progress-bar"></div>
+          </div>
+
+          <p id="book-lock-hint" class="book-lock-hint">
+            Halte deinen Finger auf das Herz, um das Buch zu öffnen ❤️
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           2. Das geöffnete Buch (7 Seiten zum Blättern & Wischen)
+           =================================================================== -->
+      <div id="opened-book" class="opened-book">
+
+        <!-- Seiden-Lesezeichen (Schnellzugriff oben) -->
+        <nav class="book-ribbons-bar" aria-label="Buch-Schnellzugriff">
+          <button class="bookmark-ribbon active" data-page-index="0"><span>💌</span> Brief</button>
+          <button class="bookmark-ribbon" data-page-index="1"><span>📸</span> Fotos I</button>
+          <button class="bookmark-ribbon" data-page-index="2"><span>📸</span> Fotos II</button>
+          <button class="bookmark-ribbon" data-page-index="3"><span>🎟️</span> Gutscheine</button>
+          <button class="bookmark-ribbon" data-page-index="4"><span>🎲</span> Date</button>
+          <button class="bookmark-ribbon" data-page-index="5"><span>💡</span> Quiz</button>
+          <button class="bookmark-ribbon" data-page-index="6"><span>🆘</span> Notfall</button>
+        </nav>
+
+        <!-- Seiten-Container -->
+        <div class="book-pages-container">
+
+          <!-- -------------------------------------------------------------
+               Seite 1: Der Liebesbrief
+               ------------------------------------------------------------- -->
+          <article id="page-letter" class="book-page active">
+            <div class="swipe-hint-bar">
+              <span>📖 Seite 1: Unser Liebesbrief</span>
+              <span>Wische nach links 👈</span>
+            </div>
+
+            <div class="page-scroll-content">
+              <div class="letter-paper">
+                <!-- Easter Egg #2: Das geheime Eselsohr oben rechts (OHNE Stift!) -->
+                <div class="folded-corner-egg" data-egg-trigger="egg-corner" title="Papierecke umfalten..."></div>
+
+                <header class="letter-header">
+                  <span id="letter-date" class="letter-date">24. Dezember</span>
+                </header>
+
+                <h3 id="letter-greeting" class="letter-greeting">Mein geliebter Schatz,</h3>
+
+                <div id="letter-body" class="letter-body">
+                  <!-- Paragraphen dynamisch aus config.js -->
+                </div>
+
+                <div class="letter-footer">
+                  <span id="letter-closing" class="letter-closing">In unendlicher Liebe,</span>
+                  <span id="letter-signature" class="letter-signature">Dein Simon</span>
+                </div>
+
+                <div id="letter-ps" class="letter-ps">
+                  <!-- PS-Text dynamisch aus config.js -->
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- -------------------------------------------------------------
+               Seite 2: Erinnerungen Teil 1 (Polaroids 1 bis 3)
+               ------------------------------------------------------------- -->
+          <article id="page-polaroids-1" class="book-page">
+            <div class="swipe-hint-bar">
+              <span>📸 Seite 2: Augenblicke (Teil I)</span>
+              <span>Wische zum Blättern 👈</span>
+            </div>
+
+            <div class="page-scroll-content">
+              <div id="polaroids-grid-part1" class="polaroids-mobile-stack">
+                <!-- Polaroids 1-3 dynamisch aus config.js -->
+              </div>
+            </div>
+          </article>
+
+          <!-- -------------------------------------------------------------
+               Seite 3: Erinnerungen Teil 2 (Polaroids 4 bis 6)
+               ------------------------------------------------------------- -->
+          <article id="page-polaroids-2" class="book-page">
+            <div class="swipe-hint-bar">
+              <span>📸 Seite 3: Augenblicke (Teil II)</span>
+              <span>Wische zum Blättern 👈</span>
+            </div>
+
+            <div class="page-scroll-content">
+              <div id="polaroids-grid-part2" class="polaroids-mobile-stack">
+                <!-- Polaroids 4-6 dynamisch aus config.js -->
+              </div>
+            </div>
+          </article>
+
+          <!-- -------------------------------------------------------------
+               Seite 4: Liebes-Gutscheine (Smartphone-Tickets)
+               ------------------------------------------------------------- -->
+          <article id="page-vouchers" class="book-page">
+            <div class="swipe-hint-bar">
+              <span>🎟️ Seite 4: Dein Gutschein-Heft</span>
+              <span>Wische zum Blättern 👈</span>
+            </div>
+
+            <div class="page-scroll-content">
+              <div id="vouchers-mobile-list" class="vouchers-mobile-list">
+                <!-- Gutscheine dynamisch aus config.js -->
+              </div>
+            </div>
+          </article>
+
+          <!-- -------------------------------------------------------------
+               Seite 5: Date-Night-Generator (Riesige Auswahl)
+               ------------------------------------------------------------- -->
+          <article id="page-datenight" class="book-page">
+            <div class="swipe-hint-bar">
+              <span>🎲 Seite 5: Date-Night-Planer</span>
+              <span>Wische zum Blättern 👈</span>
+            </div>
+
+            <div class="page-scroll-content">
+              <div class="datenight-mobile-card">
+                <div class="datenight-slots-mobile">
+                  <div class="slot-item">
+                    <div class="slot-item-label">✨ Aktivität</div>
+                    <div id="dn-activity-text" class="slot-item-display">Bereit zum Drehen...</div>
+                  </div>
+                  <div class="slot-item">
+                    <div class="slot-item-label">🍽️ Essen & Genuss</div>
+                    <div id="dn-food-text" class="slot-item-display">Bereit zum Drehen...</div>
+                  </div>
+                  <div class="slot-item">
+                    <div class="slot-item-label">🕯️ Vibe & Outfit</div>
+                    <div id="dn-vibe-text" class="slot-item-display">Bereit zum Drehen...</div>
+                  </div>
+                </div>
+
+                <div class="datenight-actions-mobile">
+                  <button id="spin-date-btn" class="btn-primary">
+                    🎲 Zufälliges Date auslosen!
+                  </button>
+                  <button id="save-date-btn" class="btn-gold hidden">
+                    📌 Als unser nächstes Date merken!
+                  </button>
+                </div>
+
+                <!-- Gepinnter Date-Plan -->
+                <div id="saved-date-card" class="saved-date-card hidden">
+                  <!-- Dynamisch -->
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- -------------------------------------------------------------
+               Seite 6: Beziehungs-Quiz
+               ------------------------------------------------------------- -->
+          <article id="page-quiz" class="book-page">
+            <div class="swipe-hint-bar">
+              <span>💡 Seite 6: Unser Wir-zwei-Quiz</span>
+              <span>Wische zum Blättern 👈</span>
+            </div>
+
+            <div class="page-scroll-content">
+              <div id="quiz-container" class="quiz-mobile-list">
+                <!-- Quizfragen dynamisch aus config.js -->
+              </div>
+
+              <div id="quiz-completion-banner" class="quiz-completion-banner hidden">
+                <div class="diploma-seal">🏆</div>
+                <h4 class="comp-title">Glückwunsch!</h4>
+                <p class="comp-msg">Du hast alle Fragen beantwortet!</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- -------------------------------------------------------------
+               Seite 7: Notfall-Knopf & Der Kuschelbär
+               ------------------------------------------------------------- -->
+          <article id="page-emergency" class="book-page">
+            <div class="swipe-hint-bar">
+              <span>🆘 Seite 7: Kuschel-Zentrale</span>
+              <span>Letzte Seite ❤️</span>
+            </div>
+
+            <div class="page-scroll-content">
+              <div class="emergency-mobile-card">
+                <h3 id="emergency-title" class="modal-title">Der Notfall-Knopf</h3>
+                <p id="emergency-subtitle" class="modal-subtitle">
+                  Wenn du mich vermisst, traurig bist oder sofort Liebe brauchst.
+                </p>
+
+                <button id="emergency-sos-button" class="vintage-buzzer" aria-label="Notfall-Knopf drücken">
+                  <span class="buzzer-icon">🚨</span>
+                  <span class="buzzer-text">SOS</span>
+                </button>
+
+                <p class="emergency-hint">Drück mich im Notfall!</p>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Untere Blätter-Leiste & Paginierung -->
+        <nav class="book-pagination-bar" aria-label="Buch Seitenavigation">
+          <button id="book-prev-btn" class="page-turn-btn" disabled>
+            ◀ Zurück
+          </button>
+          
+          <div class="page-dots-wrap" id="page-dots-container">
+            <!-- Dynamische Dots -->
+          </div>
+
+          <div class="page-indicator-text">
+            Seite <span id="page-indicator-current">1</span>/<span id="page-indicator-total">7</span>
+          </div>
+
+          <button id="book-next-btn" class="page-turn-btn">
+            Weiter ▶
+          </button>
+        </nav>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Fußzeile -->
+  <footer class="app-footer">
+    <p class="footer-quote">„Mit dir an meiner Seite ist jeder Tag wie Weihnachten.“</p>
+    <p class="footer-love">Von ganzem Herzen für dich gestaltet • Dein 24. Türchen</p>
+    <div>
+      <button id="relock-book-btn" class="btn-secondary">
+        🔒 Buch wieder verschließen
+      </button>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       Modals / Popups
+       ========================================================================= -->
+
+  <!-- Notfall-Hilfe Modal -->
+  <div id="emergency-modal" class="scrapbook-modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog">
+      <button class="modal-close-corner modal-close" aria-label="Schließen">&times;</button>
+      <div class="modal-header-icon">🛋️</div>
+      <h3 class="modal-title">Sofortige Kuschel-Hilfe</h3>
+      <p class="modal-subtitle">Alles wird gut, mein Schatz. Ich bin immer für dich da.</p>
+
+      <div class="emergency-quote-box">
+        <p class="emergency-quote-text">„Du bist das Beste, was mir je passiert ist.“</p>
+        <button class="next-quote-btn">🔄 Noch ein tröstender Gedanke</button>
+      </div>
+
+      <div class="emergency-quick-actions">
+        <button class="emergency-btn emergency-hug-btn">
+          🤗 Virtuelle Umarmung abholen
+        </button>
+        <a href="#" class="emergency-btn emergency-wa-btn">
+          💬 Notfall-WhatsApp an Simon
+        </a>
+        <a href="#" class="emergency-btn emergency-call-btn">
+          📞 Sofort anrufen
+        </a>
+      </div>
+
+      <div class="emergency-checklist-wrap">
+        <h5>Deine Sofort-Wohlfühl-Checkliste:</h5>
+        <ul class="emergency-checklist">
+          <!-- Dynamisch -->
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gutschein Eingelöst Modal -->
+  <div id="redeem-confirm-modal" class="scrapbook-modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog text-center">
+      <button class="modal-close-corner modal-close" aria-label="Schließen">&times;</button>
+      <div class="modal-header-icon">🎉</div>
+      <h3 class="modal-title modal-voucher-title">Gutschein eingelöst!</h3>
+      <p class="modal-subtitle modal-voucher-desc">Zeige ihn mir einfach vor – dein Wunsch wird erfüllt!</p>
+      <button class="btn-primary modal-close">Alles klar, ich freu mich drauf! ❤️</button>
+    </div>
+  </div>
+
+  <!-- Easter Eggs Übersicht Modal -->
+  <div id="easter-egg-modal" class="scrapbook-modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog">
+      <button class="modal-close-corner modal-close" aria-label="Schließen">&times;</button>
+      <div class="modal-header-icon">🗝️</div>
+      <h3 class="modal-title">Die 5 verborgenen Geheimnisse</h3>
+      <div class="egg-modal-progress">0 von 5 Geheimnissen gefunden</div>
+      <div class="egg-list">
+        <!-- Dynamisch -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Alle 5 Easter Eggs Freigeschaltet Modal -->
+  <div id="all-eggs-modal" class="scrapbook-modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog text-center">
+      <button class="modal-close-corner modal-close" aria-label="Schließen">&times;</button>
+      <div class="modal-header-icon">👑</div>
+      <div class="grand-certificate">
+        <h3 class="grand-title">Unglaublich! Alle 5 Geheimnisse gelüftet!</h3>
+        <p class="grand-text">Du hast jedes noch so kleine Detail mit Liebe erkundet.</p>
+        <div class="grand-reward-box">
+          <h4>🌟 Dein ewiger Master-Gutschein 🌟</h4>
+          <p>Ein Herzenswunsch deiner Wahl – ohne Einschränkungen, für immer gültig und bedingungslos erfüllt!</p>
+        </div>
+        <button class="btn-primary modal-close">Danke, mein Schatz! ❤️</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Easter Egg #2: Geheimes Eselsohr-Geständnis Modal -->
+  <div id="secret-corner-modal" class="scrapbook-modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog">
+      <button class="modal-close-corner modal-close" aria-label="Schließen">&times;</button>
+      <div class="modal-header-icon">💌</div>
+      <h3 class="modal-title">Geheime Notiz im Eselsohr</h3>
+      <div class="secret-note-paper">
+        <p class="secret-note-text">
+          „Ich wusste schon beim zweiten Date, dass du die Eine für mich bist – und ich würde mich jeden Tag wieder in dich verlieben!“
+        </p>
+        <p class="secret-note-signature">Für immer dein Simon ❤️</p>
+      </div>
+      <div class="text-center" style="margin-top: 1.25rem;">
+        <button class="btn-primary modal-close">Für immer im Herzen bewahren ✨</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       Der Kuschelbär - Erlebnisreiche Bildschirm-Umarmung
+       ========================================================================= -->
+  <div id="bear-hug-overlay" class="bear-hug-overlay">
+    <div class="bear-hug-glow"></div>
+    <div class="bear-stage">
+      <div class="cuddle-bear-character">🧸</div>
+    </div>
+    <div class="bear-speech-bubble">
+      <p class="bear-bubble-text">
+        Gaaanz fest gedrückt! 🧸❤️ Alles wird gut, mein Schatz. Dein Simon denkt ganz fest an dich!
+      </p>
+      <button id="close-bear-btn" class="btn-bear-close">
+        🤗 Noch einmal fest drücken!
+      </button>
+    </div>
+  </div>
+
+  <!-- JavaScript Module -->
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/easter-eggs.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
