@@ -85,7 +85,7 @@
 
       // Klick 2 (Feder springt auf)
       setTimeout(function () {
-        if (!ctx) return;
+        if (!ctx || SoundEngine.isMuted()) return;
         var now2 = ctx.currentTime;
         var osc2 = ctx.createOscillator();
         var gain2 = ctx.createGain();
@@ -236,7 +236,7 @@
 
       // 2. Schlag: "Dub"
       setTimeout(function () {
-        if (!ctx) return;
+        if (!ctx || SoundEngine.isMuted()) return;
         var now2 = ctx.currentTime;
         var osc2 = ctx.createOscillator();
         var gain2 = ctx.createGain();
@@ -404,6 +404,8 @@
     totalPages: 7,
     isUnlocking: false,
     unlockTimer: null,
+    countdownTimer: null,
+    bearTimers: [],
 
     // IDs der 7 Buchseiten
     pageIds: [
@@ -426,6 +428,7 @@
       ParticleSystem.init();
       this.initHeader();
       this.initBookLock();
+      this.initTimeLock();
       this.renderAllPages();
       this.initBookNavigation();
       this.initTouchSwipe();
@@ -436,10 +439,184 @@
         window.AdventEasterEggs.init();
       }
 
-      // Prüfen, ob das Buch bereits geöffnet war
-      if (window.AdventStorage.isBookUnlocked()) {
+      // Prüfen, ob das Buch bereits geöffnet war (nur wenn Zeitschloss offen!)
+      if (this.isTimeUnlocked() && window.AdventStorage.isBookUnlocked()) {
         this.openBookInstantly();
       }
+    },
+
+    // =======================================================================
+    // 3b. Zeitschloss (24. Dezember 00:00 Uhr + unsichtbares Codewort "Selina")
+    // =======================================================================
+    getUnlockDate: function () {
+      var tl = this.cfg && this.cfg.timeLock;
+      if (tl && tl.unlockDate) {
+        var parsed = new Date(tl.unlockDate);
+        if (!isNaN(parsed.getTime())) return parsed;
+      }
+      return new Date(2026, 11, 24, 0, 0, 0);
+    },
+
+    isTimeUnlocked: function () {
+      var tl = this.cfg && this.cfg.timeLock;
+      if (!tl || tl.enabled === false) return true;
+      if (window.AdventStorage && window.AdventStorage.isTimeLockBypassed()) {
+        return true;
+      }
+      return Date.now() >= this.getUnlockDate().getTime();
+    },
+
+    initTimeLock: function () {
+      var tl = this.cfg && this.cfg.timeLock;
+      if (!tl) return;
+
+      var badgeEl = document.getElementById('time-lock-badge');
+      var titleEl = document.getElementById('time-lock-title');
+      var subEl = document.getElementById('time-lock-subtitle');
+      var quoteEl = document.getElementById('time-lock-quote');
+      if (badgeEl && tl.sealedBadge) badgeEl.textContent = tl.sealedBadge;
+      if (titleEl && tl.sealedTitle) titleEl.textContent = tl.sealedTitle;
+      if (subEl && tl.sealedSubtitle) subEl.textContent = tl.sealedSubtitle;
+      if (quoteEl && tl.sealedQuote) quoteEl.textContent = tl.sealedQuote;
+
+      this.updateTimeLockUI();
+
+      if (!this.isTimeUnlocked()) {
+        this.startCountdown();
+        this.initSecretCodeListener();
+      }
+    },
+
+    updateTimeLockUI: function () {
+      var unlocked = this.isTimeUnlocked();
+      var timeLockScreen = document.getElementById('time-lock-screen');
+      var bookWrapper = document.getElementById('book-wrapper');
+      var headerSub = document.getElementById('header-subtitle');
+      var eggBadge = document.getElementById('easter-egg-badge');
+      var relockBtn = document.getElementById('relock-book-btn');
+
+      if (unlocked) {
+        if (timeLockScreen) timeLockScreen.classList.add('hidden');
+        if (bookWrapper) bookWrapper.classList.remove('hidden');
+        if (headerSub) headerSub.textContent = 'Unser Erinnerungsbuch';
+        if (eggBadge) eggBadge.classList.remove('hidden');
+        if (relockBtn) relockBtn.classList.remove('hidden');
+      } else {
+        if (timeLockScreen) timeLockScreen.classList.remove('hidden');
+        if (bookWrapper) bookWrapper.classList.add('hidden');
+        if (headerSub) headerSub.textContent = 'Adventskalender';
+        if (eggBadge) eggBadge.classList.add('hidden');
+        if (relockBtn) relockBtn.classList.add('hidden');
+      }
+    },
+
+    startCountdown: function () {
+      var self = this;
+      if (this.countdownTimer) clearInterval(this.countdownTimer);
+
+      function pad(n) {
+        return n < 10 ? '0' + n : String(n);
+      }
+
+      function tick() {
+        if (self.isTimeUnlocked()) {
+          clearInterval(self.countdownTimer);
+          self.countdownTimer = null;
+          self.updateTimeLockUI();
+          self.sound.playChime();
+          ParticleSystem.burst(60);
+          return;
+        }
+
+        var diff = Math.max(0, self.getUnlockDate().getTime() - Date.now());
+        var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        var mins = Math.floor((diff / (1000 * 60)) % 60);
+        var secs = Math.floor((diff / 1000) % 60);
+
+        var dEl = document.getElementById('cd-days');
+        var hEl = document.getElementById('cd-hours');
+        var mEl = document.getElementById('cd-minutes');
+        var sEl = document.getElementById('cd-seconds');
+
+        if (dEl) dEl.textContent = pad(days);
+        if (hEl) hEl.textContent = pad(hours);
+        if (mEl) mEl.textContent = pad(mins);
+        if (sEl) sEl.textContent = pad(secs);
+      }
+
+      tick();
+      this.countdownTimer = setInterval(tick, 1000);
+    },
+
+    initSecretCodeListener: function () {
+      var self = this;
+      var secretCode = ((this.cfg.timeLock && this.cfg.timeLock.secretCode) || 'Selina').toLowerCase();
+      var keyBuffer = '';
+      var secretInput = document.getElementById('secret-code-input');
+
+      // Desktop / Hardware-Tastatur: unsichtbar auf das Codewort lauschen
+      window.addEventListener('keydown', function (e) {
+        if (self.isTimeUnlocked()) return;
+        if (!e.key) return;
+        if (e.target === secretInput) return;
+
+        if (e.key === 'Backspace') {
+          keyBuffer = keyBuffer.slice(0, -1);
+          return;
+        }
+        if (e.key.length !== 1) return;
+
+        keyBuffer += e.key.toLowerCase();
+        if (keyBuffer.length > 32) {
+          keyBuffer = keyBuffer.slice(-32);
+        }
+
+        if (keyBuffer.indexOf(secretCode) !== -1) {
+          keyBuffer = '';
+          self.unlockTimeLockByCode();
+        }
+      });
+
+      // Smartphone: Tippen auf die "24" oder das Siegel öffnet lautlos die Tastatur (ohne sichtbares Feld)
+      var lockNum = document.getElementById('time-lock-number');
+      var sealIcon = document.getElementById('time-lock-seal-icon');
+
+      function focusHiddenInput() {
+        if (self.isTimeUnlocked() || !secretInput) return;
+        secretInput.value = '';
+        secretInput.focus();
+      }
+
+      if (lockNum) {
+        lockNum.addEventListener('click', focusHiddenInput);
+      }
+      if (sealIcon) {
+        sealIcon.addEventListener('click', focusHiddenInput);
+      }
+
+      if (secretInput) {
+        secretInput.addEventListener('input', function () {
+          if (self.isTimeUnlocked()) return;
+          var val = (secretInput.value || '').toLowerCase().trim();
+          if (val.indexOf(secretCode) !== -1) {
+            secretInput.value = '';
+            secretInput.blur();
+            self.unlockTimeLockByCode();
+          }
+        });
+      }
+    },
+
+    unlockTimeLockByCode: function () {
+      if (this.countdownTimer) {
+        clearInterval(this.countdownTimer);
+        this.countdownTimer = null;
+      }
+      window.AdventStorage.setTimeLockBypassed(true);
+      this.updateTimeLockUI();
+      this.sound.playChime();
+      ParticleSystem.burst(60);
     },
 
     triggerHeartBurst: function (count, x, y) {
@@ -505,6 +682,7 @@
 
       // Touch & Hold Interaktion für Smartphone
       function startHold(e) {
+        if (!self.isTimeUnlocked()) return;
         e.preventDefault();
         if (self.isUnlocking) return;
         self.isUnlocking = true;
@@ -519,9 +697,10 @@
         }, 1100);
       }
 
-      function cancelHold(e) {
+      function cancelHold() {
         if (!self.isUnlocking) return;
         clearTimeout(self.unlockTimer);
+        self.unlockTimer = null;
         self.isUnlocking = false;
         lockBtn.classList.remove('scanning');
         var scanProgress = document.getElementById('scan-progress-bar');
@@ -536,9 +715,9 @@
       lockBtn.addEventListener('touchend', cancelHold);
       lockBtn.addEventListener('touchcancel', cancelHold);
 
-      // Klick als Fallback (wenn jemand nur kurz tippt)
-      lockBtn.addEventListener('click', function () {
-        if (!self.isUnlocking) {
+      // Tastatur-Bedienung (Enter/Space) als barrierefreier Fallback
+      lockBtn.addEventListener('click', function (e) {
+        if (e.detail === 0 && self.isTimeUnlocked() && !self.isUnlocking) {
           self.unlockBookSequence();
         }
       });
@@ -548,6 +727,17 @@
       if (relockBtn) {
         relockBtn.addEventListener('click', function () {
           self.sound.playLockOpen();
+          clearTimeout(self.unlockTimer);
+          self.unlockTimer = null;
+          self.isUnlocking = false;
+
+          lockBtn.classList.remove('scanning', 'unlocked-flash');
+          var scanProgress = document.getElementById('scan-progress-bar');
+          if (scanProgress) scanProgress.style.width = '0%';
+          if (lockHint && self.cfg.book) {
+            lockHint.textContent = self.cfg.book.lockHint;
+          }
+
           var bookWrapper = document.getElementById('book-wrapper');
           if (bookWrapper) {
             bookWrapper.classList.remove('is-open');
@@ -636,7 +826,7 @@
 
     goToPage: function (pageIndex, playSound) {
       if (pageIndex < 0 || pageIndex >= this.totalPages) return;
-      var self = this;
+      var directionClass = pageIndex > this.currentPage ? 'turn-next' : (pageIndex < this.currentPage ? 'turn-prev' : '');
 
       if (playSound !== false) {
         this.sound.playPageTurn();
@@ -644,8 +834,10 @@
 
       var pages = document.querySelectorAll('.book-page');
       pages.forEach(function (page, idx) {
+        page.classList.remove('turn-next', 'turn-prev');
         if (idx === pageIndex) {
           page.classList.add('active');
+          if (directionClass) page.classList.add(directionClass);
           // Nach oben scrollen innerhalb der neuen Buchseite
           var scrollable = page.querySelector('.page-scroll-content') || page;
           scrollable.scrollTop = 0;
@@ -721,11 +913,21 @@
       var bookContainer = document.getElementById('opened-book');
       if (!bookContainer) return;
 
-      var startX = 0;
-      var startY = 0;
+      var startX = null;
+      var startY = null;
       var startTime = 0;
 
       bookContainer.addEventListener('touchstart', function (e) {
+        if (e.target && e.target.closest('.book-ribbons-bar')) {
+          startX = null;
+          startY = null;
+          return;
+        }
+        if (document.querySelector('.scrapbook-modal.is-open') || document.querySelector('#bear-hug-overlay.is-active')) {
+          startX = null;
+          startY = null;
+          return;
+        }
         if (e.touches.length === 1) {
           startX = e.touches[0].clientX;
           startY = e.touches[0].clientY;
@@ -734,7 +936,7 @@
       }, { passive: true });
 
       bookContainer.addEventListener('touchend', function (e) {
-        if (!startX || !startY) return;
+        if (startX === null || startY === null) return;
         var endX = e.changedTouches[0].clientX;
         var endY = e.changedTouches[0].clientY;
         var diffX = endX - startX;
@@ -752,8 +954,8 @@
           }
         }
 
-        startX = 0;
-        startY = 0;
+        startX = null;
+        startY = null;
       }, { passive: true });
     },
 
@@ -901,7 +1103,7 @@
           '<div class="vintage-stamp ' + (isRedeemed ? 'visible' : '') + '">' +
             '<span class="stamp-border">' +
               '<span class="stamp-text">EINGELÖST</span>' +
-              '<span class="stamp-date">' + (info ? info.redeemedAt : '24.12.2024') + '</span>' +
+              '<span class="stamp-date">' + (info ? info.redeemedAt : '24.12.2026') + '</span>' +
             '</span>' +
           '</div>';
 
@@ -955,6 +1157,17 @@
     },
 
     // 7.5 Seite 5: Date-Night-Generator (erweiterte riesige Liste)
+    buildDateWhatsAppUrl: function (dateObj) {
+      var waNum = (this.cfg.emergency && this.cfg.emergency.whatsappNumber) || '';
+      var msg =
+        'Hey Simon! 🎲💖 Ich habe unser nächstes Date ausgelost:\n\n' +
+        '✨ Aktivität: ' + dateObj.activity.emoji + ' ' + dateObj.activity.text + '\n' +
+        '🍽️ Essen: ' + dateObj.food.emoji + ' ' + dateObj.food.text + '\n' +
+        '🕯️ Vibe: ' + dateObj.vibe.emoji + ' ' + dateObj.vibe.text + '\n\n' +
+        'Wann machen wir das? 😍';
+      return 'https://wa.me/' + waNum + '?text=' + encodeURIComponent(msg);
+    },
+
     renderDateNightGenerator: function () {
       var self = this;
       var genData = this.cfg.dateNightGenerator;
@@ -965,6 +1178,7 @@
       var vibeEl = document.getElementById('dn-vibe-text');
       var spinBtn = document.getElementById('spin-date-btn');
       var saveBtn = document.getElementById('save-date-btn');
+      var shareWaBtn = document.getElementById('share-date-wa-btn');
       var savedCard = document.getElementById('saved-date-card');
 
       var currentRoll = null;
@@ -979,6 +1193,10 @@
           self.rollDateNight(genData, actEl, foodEl, vibeEl, function (result) {
             currentRoll = result;
             if (saveBtn) saveBtn.classList.remove('hidden');
+            if (shareWaBtn) {
+              shareWaBtn.href = self.buildDateWhatsAppUrl(result);
+              shareWaBtn.classList.remove('hidden');
+            }
           });
         });
       }
@@ -1054,7 +1272,8 @@
           '<li><strong>Aktivität:</strong> ' + dateObj.activity.emoji + ' ' + dateObj.activity.text + '</li>' +
           '<li><strong>Essen:</strong> ' + dateObj.food.emoji + ' ' + dateObj.food.text + '</li>' +
           '<li><strong>Vibe:</strong> ' + dateObj.vibe.emoji + ' ' + dateObj.vibe.text + '</li>' +
-        '</ul>';
+        '</ul>' +
+        '<a href="' + this.buildDateWhatsAppUrl(dateObj) + '" target="_blank" rel="noopener noreferrer" class="btn-whatsapp saved-date-wa-btn">💬 Date-Plan an Simon schicken</a>';
 
       savedCard.classList.remove('hidden');
 
@@ -1258,18 +1477,26 @@
     // =======================================================================
     // 8. Der erlebnisreiche Kuschelbär (Walks on screen & hugs!)
     // =======================================================================
+    clearBearTimers: function () {
+      if (this.bearTimers && this.bearTimers.length) {
+        this.bearTimers.forEach(function (t) { clearTimeout(t); });
+      }
+      this.bearTimers = [];
+    },
+
     startBearHugExperience: function () {
       var self = this;
       var overlay = document.getElementById('bear-hug-overlay');
       if (!overlay) return;
 
+      this.clearBearTimers();
       overlay.classList.add('is-active');
       overlay.classList.remove('fade-out');
 
       // Herzschlag-Audio starten
       this.sound.playHeartbeat();
-      setTimeout(function () { self.sound.playHeartbeat(); }, 1200);
-      setTimeout(function () { self.sound.playHeartbeat(); }, 2400);
+      this.bearTimers.push(setTimeout(function () { self.sound.playHeartbeat(); }, 1200));
+      this.bearTimers.push(setTimeout(function () { self.sound.playHeartbeat(); }, 2400));
 
       var bear = overlay.querySelector('.cuddle-bear-character');
       var bubble = overlay.querySelector('.bear-speech-bubble');
@@ -1278,25 +1505,38 @@
       // Animation-Sequenz:
       // Schritt 1: Bär watschelt herein
       if (bear) bear.className = 'cuddle-bear-character bear-walk-in';
+      if (bubble) bubble.classList.remove('is-visible');
+      if (heartGlow) heartGlow.classList.remove('glow-pulse');
 
       // Schritt 2: Nach 1 Sekunde öffnet er die Arme für die Riesen-Umarmung
-      setTimeout(function () {
+      this.bearTimers.push(setTimeout(function () {
         if (bear) bear.className = 'cuddle-bear-character bear-hugging';
         if (heartGlow) heartGlow.classList.add('glow-pulse');
         ParticleSystem.burst(70);
         self.sound.playChime();
-      }, 1100);
+      }, 1100));
 
       // Schritt 3: Sprechblase erscheint
-      setTimeout(function () {
+      this.bearTimers.push(setTimeout(function () {
         if (bubble) bubble.classList.add('is-visible');
         ParticleSystem.burst(40);
-      }, 1900);
+      }, 1900));
 
-      // Button zum Schließen oder noch einmal umarmen
+      // Noch einmal fest drücken!
+      var rehugBtn = document.getElementById('rehug-bear-btn');
+      if (rehugBtn) {
+        rehugBtn.onclick = function () {
+          self.sound.playHeartbeat();
+          self.sound.playChime();
+          ParticleSystem.burst(80);
+        };
+      }
+
+      // Button zum Schließen
       var closeBearBtn = document.getElementById('close-bear-btn');
       if (closeBearBtn) {
         closeBearBtn.onclick = function () {
+          self.clearBearTimers();
           overlay.classList.add('fade-out');
           setTimeout(function () {
             overlay.classList.remove('is-active', 'fade-out');

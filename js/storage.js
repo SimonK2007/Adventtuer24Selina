@@ -72,6 +72,14 @@
   }
 
   var AdventStorage = {
+    // Zeitschloss-Bypass per geheimem Codewort
+    isTimeLockBypassed: function () {
+      return !!getItem('time_lock_bypassed', false);
+    },
+    setTimeLockBypassed: function (bypassed) {
+      setItem('time_lock_bypassed', !!bypassed);
+    },
+
     // Buch-Schloss Status (ob bereits entriegelt)
     isBookUnlocked: function () {
       return !!getItem('book_unlocked', false) || !!getItem('envelope_opened', false);
@@ -194,6 +202,7 @@
 
     // Zurücksetzen für Testzwecke
     resetAll: function () {
+      removeItem('time_lock_bypassed');
       removeItem('book_unlocked');
       removeItem('envelope_opened');
       removeItem('last_page');

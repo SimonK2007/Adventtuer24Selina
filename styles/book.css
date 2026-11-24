@@ -150,6 +150,132 @@
 }
 
 /* ==========================================================================
+   Zeitschloss / Eigenständige Türchen-24-Countdown-Ansicht (vor 24.12.)
+   ========================================================================== */
+.time-lock-screen {
+  width: 100%;
+  margin: 0.5rem auto 1.5rem auto;
+}
+
+.time-lock-card {
+  width: 100%;
+  min-height: 480px;
+  background: radial-gradient(circle at 50% 25%, #3a1f16, #24120c 70%, #170a06);
+  border: 2px solid rgba(201, 158, 56, 0.55);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-book), inset 0 0 30px rgba(201, 158, 56, 0.08);
+  padding: 2.2rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.time-lock-badge {
+  font-family: var(--font-serif);
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: 0.6rem;
+}
+
+.time-lock-number {
+  font-family: var(--font-serif);
+  font-size: 4.5rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.65), 0 0 24px rgba(201, 158, 56, 0.45);
+  margin-bottom: 0.75rem;
+  user-select: none;
+  cursor: default;
+}
+
+.time-lock-seal-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+  margin-bottom: 0.55rem;
+  filter: drop-shadow(0 0 10px rgba(255, 210, 110, 0.65));
+  animation: heart-pulse 2.6s infinite ease-in-out;
+  user-select: none;
+}
+
+.time-lock-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  color: #fdf5df;
+  margin-bottom: 0.35rem;
+}
+
+.time-lock-subtitle {
+  font-size: 0.85rem;
+  color: rgba(247, 236, 213, 0.85);
+  line-height: 1.4;
+  max-width: 270px;
+  margin-bottom: 1rem;
+}
+
+.countdown-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.45rem;
+  width: 100%;
+  max-width: 280px;
+  margin-bottom: 0.9rem;
+}
+
+.countdown-box {
+  background: rgba(0, 0, 0, 0.38);
+  border: 1px solid rgba(201, 158, 56, 0.5);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.countdown-num {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffd97d;
+  line-height: 1.1;
+}
+
+.countdown-unit {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: rgba(247, 236, 213, 0.75);
+  margin-top: 0.15rem;
+}
+
+.time-lock-quote {
+  font-family: var(--font-handwriting);
+  font-size: 1.1rem;
+  color: var(--color-gold);
+}
+
+/* Komplett unsichtbares Feld für Smartphone-Tastatur */
+.secret-code-input {
+  position: fixed;
+  top: -200px;
+  left: -200px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  pointer-events: none;
+  font-size: 16px;
+}
+
+/* ==========================================================================
    Herz-Fingerabdruck-Scanner / Buch-Schloss
    ========================================================================== */
 .book-lock-area {
@@ -361,7 +487,9 @@
 .book-pages-container {
   position: relative;
   width: 100%;
-  min-height: 520px;
+  min-height: 400px;
+  perspective: 1200px;
+  touch-action: pan-y;
 }
 
 .book-page {
@@ -370,11 +498,21 @@
   padding: 1.25rem 1rem 1rem 1rem;
   background: var(--bg-page);
   position: relative;
+  transform-origin: left center;
 }
 
 .book-page.active {
   display: block;
-  animation: page-fade 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  animation: page-fade 0.32s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.book-page.active.turn-next {
+  animation: page-turn-next 0.36s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.book-page.active.turn-prev {
+  transform-origin: right center;
+  animation: page-turn-prev 0.36s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 @keyframes page-fade {
@@ -382,10 +520,21 @@
   to { opacity: 1; transform: translateX(0); }
 }
 
+@keyframes page-turn-next {
+  from { opacity: 0.25; transform: translateX(26px) rotateY(-8deg); }
+  to { opacity: 1; transform: translateX(0) rotateY(0deg); }
+}
+
+@keyframes page-turn-prev {
+  from { opacity: 0.25; transform: translateX(-26px) rotateY(8deg); }
+  to { opacity: 1; transform: translateX(0) rotateY(0deg); }
+}
+
 /* Scrollbarer Bereich innerhalb jeder Buchseite */
 .page-scroll-content {
-  max-height: calc(100vh - 210px);
-  min-height: 480px;
+  max-height: calc(100vh - 215px);
+  max-height: calc(100dvh - 215px);
+  min-height: 360px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding-right: 0.25rem;

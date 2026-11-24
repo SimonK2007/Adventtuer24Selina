@@ -20,7 +20,10 @@
 
       // 1. Tastatur-Code: Lauschen auf "LOVE" oder "24"
       window.addEventListener('keydown', function (e) {
-        if (!e.key) return;
+        if (!e.key || e.key.length > 1) return;
+        if (e.target && e.target.id === 'secret-code-input') return;
+        if (window.AdventApp && typeof window.AdventApp.isTimeUnlocked === 'function' && !window.AdventApp.isTimeUnlocked()) return;
+
         var char = e.key.toUpperCase();
         keyBuffer += char;
         if (keyBuffer.length > 20) {
@@ -117,6 +120,9 @@
     },
 
     triggerEgg: function (eggId) {
+      if (window.AdventApp && typeof window.AdventApp.isTimeUnlocked === 'function' && !window.AdventApp.isTimeUnlocked()) {
+        return;
+      }
       var eggData = this.getEggData(eggId);
       if (!eggData) return;
 

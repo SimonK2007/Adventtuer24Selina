@@ -7,11 +7,22 @@
 window.ADVENT_CONFIG = {
   meta: {
     doorNumber: 24,
-    year: "2024",
+    year: "2026",
     title: "Türchen 24 • Das große Finale",
     subtitle: "Unser persönliches Scrapbook & Erinnerungsbuch",
     recipientName: "Mein Schatz",
     senderName: "Dein Simon"
+  },
+
+  // Zeitschloss bis 24. Dezember 00:00 Uhr (mit geheimem Codewort)
+  timeLock: {
+    enabled: true,
+    unlockDate: "2026-12-24T00:00:00",
+    secretCode: "Selina",
+    sealedBadge: "Türchen 24 • Noch versiegelt",
+    sealedTitle: "Psst... noch ein kleines Geheimnis",
+    sealedSubtitle: "Dieses besondere Türchen öffnet sich erst an Heiligabend um 00:00 Uhr.",
+    sealedQuote: "„Vorfreude ist die schönste Freude.“ ✨"
   },
 
   // Buch-Umschlag & Schloss (Vor dem Öffnen)
@@ -43,6 +54,7 @@ window.ADVENT_CONFIG = {
   },
 
   // Polaroids aufgeteilt auf 2 Seiten (Erinnerungen Teil 1 & Teil 2)
+  // Tipp: Optional kann bei jedem Polaroid `photoSrc: "assets/bild1.jpg"` ergänzt werden!
   polaroidsPart1: [
     {
       id: "pol-1",

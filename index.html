@@ -27,7 +27,7 @@
         </div>
         <div class="brand-text">
           <h1 id="header-door-title">Türchen 24</h1>
-          <p>Unser Erinnerungsbuch</p>
+          <p id="header-subtitle">Unser Erinnerungsbuch</p>
         </div>
       </div>
 
@@ -44,8 +44,58 @@
     </div>
   </header>
 
-  <!-- Haupt-Container: Das Buch auf dem Tisch -->
+  <!-- Haupt-Container -->
   <main class="app-container">
+
+    <!-- =====================================================================
+         0. Zeitschloss-Ansicht vor dem 24. Dezember 00:00 Uhr
+         (Kein Hinweis auf das Buch oder den Inhalt)
+         ===================================================================== -->
+    <section id="time-lock-screen" class="time-lock-screen hidden" aria-label="Türchen 24 Countdown">
+      <div class="time-lock-card">
+        <div id="time-lock-badge" class="time-lock-badge">Türchen 24 • Noch versiegelt</div>
+        <div id="time-lock-number" class="time-lock-number">24</div>
+        <div id="time-lock-seal-icon" class="time-lock-seal-icon" aria-hidden="true">🕯️</div>
+        <h2 id="time-lock-title" class="time-lock-title">Psst... noch ein kleines Geheimnis</h2>
+        <p id="time-lock-subtitle" class="time-lock-subtitle">
+          Dieses besondere Türchen öffnet sich erst an Heiligabend um 00:00 Uhr.
+        </p>
+
+        <div class="countdown-grid" aria-label="Countdown bis Heiligabend">
+          <div class="countdown-box">
+            <span id="cd-days" class="countdown-num">00</span>
+            <span class="countdown-unit">Tage</span>
+          </div>
+          <div class="countdown-box">
+            <span id="cd-hours" class="countdown-num">00</span>
+            <span class="countdown-unit">Std</span>
+          </div>
+          <div class="countdown-box">
+            <span id="cd-minutes" class="countdown-num">00</span>
+            <span class="countdown-unit">Min</span>
+          </div>
+          <div class="countdown-box">
+            <span id="cd-seconds" class="countdown-num">00</span>
+            <span class="countdown-unit">Sek</span>
+          </div>
+        </div>
+
+        <p id="time-lock-quote" class="time-lock-quote">„Vorfreude ist die schönste Freude.“ ✨</p>
+      </div>
+    </section>
+
+    <!-- Unsichtbares Eingabefeld für Mobile-Tastatur (ohne jede sichtbare Aufforderung) -->
+    <input
+      id="secret-code-input"
+      class="secret-code-input"
+      type="text"
+      autocomplete="off"
+      autocapitalize="off"
+      autocorrect="off"
+      spellcheck="false"
+      tabindex="-1"
+      aria-hidden="true"
+    >
 
     <div id="book-wrapper" class="book-wrapper">
 
@@ -70,7 +120,7 @@
         </div>
 
         <!-- Herz-Fingerabdruck-Scanner / Schloss -->
-        <div class="book-lock-area">
+        <div id="book-lock-area" class="book-lock-area">
           <button id="heart-fingerprint-btn" class="heart-fingerprint-btn" aria-label="Buch mit Herz-Scan öffnen">
             <span class="lock-heart-icon">❤️</span>
             <span class="lock-label">Öffnen</span>
@@ -223,6 +273,9 @@
                   <button id="save-date-btn" class="btn-gold hidden">
                     📌 Als unser nächstes Date merken!
                   </button>
+                  <a id="share-date-wa-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn-whatsapp hidden">
+                    💬 Date-Plan an Simon schicken
+                  </a>
                 </div>
 
                 <!-- Gepinnter Date-Plan -->
@@ -432,9 +485,14 @@
       <p class="bear-bubble-text">
         Gaaanz fest gedrückt! 🧸❤️ Alles wird gut, mein Schatz. Dein Simon denkt ganz fest an dich!
       </p>
-      <button id="close-bear-btn" class="btn-bear-close">
-        🤗 Noch einmal fest drücken!
-      </button>
+      <div class="bear-actions">
+        <button id="rehug-bear-btn" class="btn-bear-rehug">
+          🤗 Noch einmal fest drücken!
+        </button>
+        <button id="close-bear-btn" class="btn-bear-close">
+          Danke, Kuschelbär! ❤️
+        </button>
+      </div>
     </div>
   </div>
 
